@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# Function to display a progress bar
+progress_bar() {
+  local percent=$1
+  local width=25
+  local completed=$((percent * width / 100))
+  local remaining=$((width - completed))
+
+  printf "["
+  printf "%${completed}s" | tr ' ' '='
+  printf ">"
+  printf "%${remaining}s" | tr ' ' ' '
+  printf "] \e[32m%d%%\e[0m\n" "$percent"
+}
+
+# Function to display individual download details
+download_details() {
+  local url=$1
+  local filename=$(basename "$url")
+
+  echo -e "\e[36mDownloading:\e[0m $filename"
+}
+
+# Default output directory
+output_dir="./downloads"
+
+# Parse command-line options
+while getopts ":d:" opt; do
+  case $opt in
+    d)
+      output_dir="$OPTARG"
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
+# Create the output directory if it doesn't exist
+mkdir -p "$output_dir"
+
+cat << "EOF"
+###########################################################################
+#  _                     _   _             _            _____  _____  __  #
+# | |                   | | | |           | |          |  _  ||  _  |/  | #
+# | |     __ _ _____   _| |_| |_   _ _ __ | |_ ___ _ __| |/' || |/' |`| | #
+# | |    / _` |_  / | | |  _  | | | | '_ \| __/ _ \ '__|  /| ||  /| | | | #
+# | |___| (_| |/ /| |_| | | | | |_| | | | | ||  __/ |  \ |_/ /\ |_/ /_| |_#
+# \_____/\__,_/___|\__, \_| |_/\__,_|_| |_|\__\___|_|   \___/  \___/ \___/#
+#                   __/ |                                                 #
+#                  |___/     By T4H3XR !!                                 #
+###########################################################################
+EOF
+
+urls=(
+  "https://github.com/projectdiscovery/nuclei/releases/download/v3.1.7/nuclei_3.1.7_linux_amd64.zip"
+  "https://github.com/projectdiscovery/nuclei-templates/archive/refs/tags/v9.7.4.tar.gz"
+  "https://github.com/projectdiscovery/httpx/releases/download/v1.3.9/httpx_1.3.9_linux_amd64.zip"
+  "https://github.com/projectdiscovery/subfinder/releases/download/v2.6.4/subfinder_2.6.4_linux_amd64.zip"
+  "https://github.com/Findomain/Findomain/releases/download/9.0.4/findomain-linux.zip"
+  "https://github.com/tomnomnom/assetfinder/releases/download/v0.1.1/assetfinder-linux-amd64-0.1.1.tgz"
+  "https://github.com/tomnomnom/waybackurls/releases/download/v0.1.0/waybackurls-linux-amd64-0.1.0.tgz"
+  "https://github.com/projectdiscovery/katana/releases/download/v1.0.5/katana_1.0.5_linux_amd64.zip"
+  "https://github.com/projectdiscovery/dnsx/releases/download/v1.1.6/dnsx_1.1.6_linux_amd64.zip"
+  "https://github.com/assetnote/kiterunner/releases/download/v1.0.2/kiterunner_1.0.2_linux_amd64.tar.gz"
+  "https://github.com/lc/gau/releases/download/v2.2.1/gau_2.2.1_linux_amd64.tar.gz"
+  "https://github.com/s0md3v/XSStrike/archive/refs/tags/3.1.5.tar.gz"
+  "https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip"
+  "https://github.com/codingo/NoSQLMap/archive/refs/tags/0.5.tar.gz"
+  "https://github.com/gitleaks/gitleaks/releases/download/v8.18.1/gitleaks_8.18.1_linux_x64.tar.gz"
+  "https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_macos_amd64_2.0.0-beta.zip"
+)
+
+# Initialize progress variables
+total_urls=${#urls[@]}
+current_url=0
+
+# Loop through the URLs and download each one to the specified folder
+for url in "${urls[@]}"; do
+  ((current_url++))
+  download_details "$url"
+
+  # Simulating download progress with a sleep
+  for ((i = 0; i <= 100; i += 10)); do
+    sleep 0.1
+    printf "\r"
+    progress_bar "$i"
+  done
+
+  printf "\n"
+
+  # Actual download command
+  if wget -P "$output_dir" "$url"; then
+    echo -e "\e[32mDownload successful.\e[0m"
+  else
+    echo -e "\e[31mFailed to download: $url\e[0m"
+  fi
+
+  # Display separator for better readability
+  if [ "$current_url" -lt "$total_urls" ]; then
+    printf "\n====================================\n\n"
+  fi
+done
+
+echo -e "\e[32mDownloads completed. Files saved in: $output_dir\e[0m"
