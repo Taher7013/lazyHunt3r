@@ -74,7 +74,7 @@ urls=(
   "https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip"
   "https://github.com/codingo/NoSQLMap/archive/refs/tags/0.5.tar.gz"
   "https://github.com/gitleaks/gitleaks/releases/download/v8.18.1/gitleaks_8.18.1_linux_x64.tar.gz"
-  "https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_macos_amd64_2.0.0-beta.zip"
+  "https://github.com/michenriksen/gitrob/releases/download/v2.0.0-beta/gitrob_linux_amd64_2.0.0-beta.zip"
 )
 
 # Initialize progress variables
